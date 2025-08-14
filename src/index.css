@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import "@burnt-labs/abstraxion/dist/index.css";
+@import "@burnt-labs/ui/dist/index.css";
 
 @tailwind base;
 @tailwind components;

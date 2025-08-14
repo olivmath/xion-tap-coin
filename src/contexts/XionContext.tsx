@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Abstraxion, useAbstraxionAccount, useAbstraxionSigningClient } from '@burnt-labs/abstraxion';
+import { useAbstraxionAccount, useAbstraxionSigningClient } from '@burnt-labs/abstraxion';
 
 interface XionContextType {
   address: string | undefined;
@@ -11,17 +11,7 @@ interface XionContextType {
 
 const XionContext = createContext<XionContextType | undefined>(undefined);
 
-const XION_CONFIG = {
-  contracts: [
-    {
-      address: "xion1aza0jdzfc7g0u64k8qcvcxfppll0cjeer56k38vpshe3p26q5kzswpywp9",
-      amounts: [{ denom: "uxion", amount: "1000000" }],
-    },
-  ],
-  stake: false,
-};
-
-const XionInnerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const XionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { data: account } = useAbstraxionAccount();
   const { client } = useAbstraxionSigningClient();
   const [isConnected, setIsConnected] = useState(false);
@@ -31,7 +21,7 @@ const XionInnerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, [account]);
 
   const connect = () => {
-    // Abstraxion handles connection automatically
+    // Abstraxion handles connection automatically via modal
   };
 
   const disconnect = () => {
@@ -51,16 +41,6 @@ const XionInnerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     <XionContext.Provider value={value}>
       {children}
     </XionContext.Provider>
-  );
-};
-
-export const XionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  return (
-    <Abstraxion contracts={XION_CONFIG.contracts} stake={XION_CONFIG.stake}>
-      <XionInnerProvider>
-        {children}
-      </XionInnerProvider>
-    </Abstraxion>
   );
 };
 

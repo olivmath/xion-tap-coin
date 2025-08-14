@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useXion } from '@/contexts/XionContext';
+import { Abstraxion, useModal } from '@burnt-labs/abstraxion';
 import { Wallet } from 'lucide-react';
 
 const WalletLogin: React.FC = () => {
-  const { connect, isConnected, address } = useXion();
+  const { isConnected } = useXion();
+  const [showModal, setShowModal] = useModal();
 
   if (isConnected) {
     return null;
@@ -27,11 +29,12 @@ const WalletLogin: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <Button 
-            onClick={connect}
+            onClick={() => setShowModal(true)}
             className="w-full h-12 bg-mario-red hover:bg-mario-red/90 text-white font-pixel text-lg shadow-lg"
           >
             Connect Wallet
           </Button>
+          <Abstraxion onClose={() => setShowModal(false)} />
           <div className="text-center text-sm text-mario-brown/60">
             Powered by XION Network
           </div>
