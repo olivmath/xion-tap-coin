@@ -15,7 +15,8 @@ interface Player {
 
 interface GameState {
   coins: number;
-  groundHeight: number;
+  groundWidth: number;  // Mudança: largura do chão ao invés de altura
+  groundHeight: number; // Altura fixa do chão
   isJumping: boolean;
   showCoin: boolean;
   lastJumpTime: number;
@@ -28,7 +29,8 @@ const MarioGame: React.FC = () => {
   
   const [gameState, setGameState] = useState<GameState>({
     coins: 0,
-    groundHeight: 100,
+    groundWidth: 100,     // Largura inicial do chão (100%)
+    groundHeight: 60,     // Altura fixa do chão
     isJumping: false,
     showCoin: false,
     lastJumpTime: 0,
@@ -39,10 +41,10 @@ const MarioGame: React.FC = () => {
   
   // Jump rate limit: 1 jump per second
   const JUMP_COOLDOWN = 1000;
-  const GROUND_DECAY_RATE = 2;
-  const GROUND_INCREASE_RATE = 5;
-  const MIN_GROUND_HEIGHT = 20;
-  const MAX_GROUND_HEIGHT = 100;
+  const GROUND_DECAY_RATE = 8;      // Aumentado: chão diminui mais rápido
+  const GROUND_INCREASE_RATE = 12;   // Aumentado: chão aumenta mais ao pular
+  const MIN_GROUND_WIDTH = 20;       // Largura mínima do chão
+  const MAX_GROUND_WIDTH = 100;      // Largura máxima do chão
 
   // Mock ranking data - in real app this would come from blockchain
   useEffect(() => {
@@ -61,15 +63,15 @@ const MarioGame: React.FC = () => {
     setPlayers(mockPlayers);
   }, [gameState.coins, address]);
 
-  // Ground decay effect
+  // Ground decay effect - chão diminui da direita para esquerda
   useEffect(() => {
     if (gameState.totalJumps > 0) {
       const interval = setInterval(() => {
         setGameState(prev => ({
           ...prev,
-          groundHeight: Math.max(MIN_GROUND_HEIGHT, prev.groundHeight - GROUND_DECAY_RATE)
+          groundWidth: Math.max(MIN_GROUND_WIDTH, prev.groundWidth - GROUND_DECAY_RATE)
         }));
-      }, 2000);
+      }, 800); // Intervalo menor = mais rápido
 
       return () => clearInterval(interval);
     }
@@ -93,7 +95,7 @@ const MarioGame: React.FC = () => {
       lastJumpTime: now,
       totalJumps: prev.totalJumps + 1,
       coins: prev.coins + 1,
-      groundHeight: Math.min(MAX_GROUND_HEIGHT, prev.groundHeight + GROUND_INCREASE_RATE)
+      groundWidth: Math.min(MAX_GROUND_WIDTH, prev.groundWidth + GROUND_INCREASE_RATE)
     }));
 
     // Reset jump animation
@@ -170,14 +172,13 @@ const MarioGame: React.FC = () => {
 
           {/* Mario */}
           <div 
-            className={`w-16 h-16 cursor-pointer transition-transform duration-500 ${
+            className={`w-16 h-16 cursor-pointer transition-transform duration-500 relative z-10 ${
               gameState.isJumping ? 'animate-mario-jump' : 'hover:scale-110'
             }`}
             onClick={handleJump}
             style={{ 
-              transform: `translateY(-${gameState.groundHeight}px) ${
-                gameState.isJumping ? 'translateY(-60px)' : ''
-              }` 
+              transform: `${gameState.isJumping ? 'translateY(-60px)' : ''}`,
+              bottom: `${gameState.groundHeight}px`
             }}
           >
             <div className="w-full h-full bg-mario-red rounded-lg border-4 border-mario-brown shadow-lg">
@@ -187,27 +188,44 @@ const MarioGame: React.FC = () => {
             </div>
           </div>
 
-          {/* Ground */}
-          <div 
-            className="w-32 bg-mario-ground border-t-4 border-mario-brown transition-all duration-1000"
-            style={{ height: `${gameState.groundHeight}px` }}
-          >
-            <div className="w-full h-full bg-gradient-to-b from-mario-ground to-green-700"></div>
+          {/* Ground - diminui da direita para esquerda */}
+          <div className="relative">
+            <div 
+              className="bg-mario-ground border-t-4 border-mario-brown transition-all duration-1000 relative overflow-hidden"
+              style={{ 
+                height: `${gameState.groundHeight}px`,
+                width: '200px' // Largura fixa do container
+              }}
+            >
+              {/* Chão visível que diminui da direita */}
+              <div 
+                className="h-full bg-gradient-to-b from-mario-ground to-green-700 transition-all duration-1000"
+                style={{ 
+                  width: `${gameState.groundWidth}%`,
+                  marginLeft: 'auto' // Alinha à direita, diminui da esquerda
+                }}
+              />
+              
+              {/* Padrão do chão para mostrar a erosão */}
+              <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                <div className="w-full h-full bg-gradient-to-r from-transparent via-mario-brown/20 to-mario-brown/40" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Ground Height Indicator */}
+      {/* Ground Width Indicator */}
       <div className="absolute bottom-4 left-4">
         <Card className="bg-white/90 backdrop-blur">
           <CardContent className="p-3">
             <div className="text-sm font-pixel text-mario-brown">
-              Ground: {gameState.groundHeight}%
+              Ground: {Math.round(gameState.groundWidth)}%
             </div>
             <div className="w-20 h-2 bg-gray-300 rounded mt-1">
               <div 
                 className="h-full bg-mario-ground rounded transition-all"
-                style={{ width: `${gameState.groundHeight}%` }}
+                style={{ width: `${gameState.groundWidth}%` }}
               />
             </div>
           </CardContent>
@@ -268,8 +286,9 @@ const MarioGame: React.FC = () => {
           <CardContent className="p-3 text-sm text-mario-brown space-y-1">
             <div>🎯 Click Mario to jump and hit the block</div>
             <div>🪙 Earn coins with each successful jump</div>
-            <div>🏃 Ground decreases over time</div>
+            <div>🏃 Ground shrinks from right to left over time</div>
             <div>⏱️ 1 second cooldown between jumps</div>
+            <div>⚠️ Game over when ground gets too small!</div>
           </CardContent>
         </Card>
       </div>
