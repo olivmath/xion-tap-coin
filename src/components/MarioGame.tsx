@@ -10,13 +10,13 @@ import { GameInstructions } from '@/game/components/GameInstructions';
 import { GroundIndicator } from '@/game/components/GroundIndicator';
 
 /**
- * Componente principal do jogo Mario
- * Refatorado para usar hooks e componentes separados
- */
-const MarioGame: React.FC = () => {
-  const { address, disconnect, saveScore, getLeaderboard, isLoading } = useXion();
-  const { gameState, handleJump, restartGame } = useGameState();
-  const { players } = useLeaderboard();
+   * Componente principal do jogo Mario
+   * Refatorado para usar hooks e componentes separados
+   */
+  const MarioGame: React.FC = () => {
+    const { address, disconnect, saveScore, getLeaderboard, isLoading } = useXion();
+    const { gameState, handleJump, restartGame } = useGameState();
+    const { players } = useLeaderboard(gameState.coins);
 
   // Salvar pontuação na blockchain quando o jogo terminar
   useEffect(() => {
