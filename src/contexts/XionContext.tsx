@@ -1,40 +1,33 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAbstraxionAccount, useAbstraxionSigningClient } from '@burnt-labs/abstraxion';
+import React, { createContext, useContext, ReactNode } from 'react';
+import { useWallet } from '@/blockchain/hooks/useWallet';
+import { useBlockchain } from '@/blockchain/hooks/useBlockchain';
 
 interface XionContextType {
+  // Wallet
   address: string | undefined;
   isConnected: boolean;
   client: any;
   connect: () => void;
   disconnect: () => void;
+  formatAddress: (address: string) => string;
+  
+  // Blockchain
+  saveScore: (score: number) => Promise<boolean>;
+  getLeaderboard: () => Promise<any[]>;
+  getUserStats: () => Promise<any>;
+  isContractAvailable: () => Promise<boolean>;
+  isLoading: boolean;
 }
 
 const XionContext = createContext<XionContextType | undefined>(undefined);
 
 export const XionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { data: account } = useAbstraxionAccount();
-  const { client } = useAbstraxionSigningClient();
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    setIsConnected(!!account?.bech32Address);
-  }, [account]);
-
-  const connect = () => {
-    // Abstraxion handles connection automatically via modal
-  };
-
-  const disconnect = () => {
-    // Handle logout if needed
-    setIsConnected(false);
-  };
+  const wallet = useWallet();
+  const blockchain = useBlockchain();
 
   const value: XionContextType = {
-    address: account?.bech32Address,
-    isConnected,
-    client,
-    connect,
-    disconnect,
+    ...wallet,
+    ...blockchain,
   };
 
   return (
@@ -44,7 +37,7 @@ export const XionProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-export const useXion = () => {
+export const useXion = (): XionContextType => {
   const context = useContext(XionContext);
   if (context === undefined) {
     throw new Error('useXion must be used within a XionProvider');
