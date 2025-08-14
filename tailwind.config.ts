@@ -18,6 +18,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				pixel: ['"Press Start 2P"', 'monospace'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,7 +64,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Mario-themed colors
+				mario: {
+					red: 'hsl(var(--mario-red))',
+					blue: 'hsl(var(--mario-blue))',
+					gold: 'hsl(var(--mario-gold))',
+					brown: 'hsl(var(--mario-brown))',
+					green: 'hsl(var(--mario-green))',
+					sky: 'hsl(var(--mario-sky))',
+					ground: 'hsl(var(--mario-ground))',
+					block: 'hsl(var(--mario-block))',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -70,25 +84,28 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
-				}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'fade-in': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'mario-jump': {
+					'0%': { transform: 'translateY(0) scaleY(1)' },
+					'50%': { transform: 'translateY(-60px) scaleY(1.1)' },
+					'100%': { transform: 'translateY(0) scaleY(1)' }
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out',
+				'mario-jump': 'mario-jump 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
 			}
 		}
 	},

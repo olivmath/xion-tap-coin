@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -38,20 +40,23 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
+    /* Mario-themed colors */
+    --mario-red: 0 85% 45%;
+    --mario-blue: 220 85% 45%;
+    --mario-gold: 45 95% 55%;
+    --mario-brown: 30 40% 25%;
+    --mario-green: 120 60% 40%;
+    --mario-sky: 200 85% 70%;
+    --mario-ground: 120 50% 35%;
+    --mario-block: 40 80% 50%;
+
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
