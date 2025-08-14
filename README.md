@@ -1,73 +1,144 @@
-# Welcome to your Lovable project
+# Frontend Contador Xion
 
-## Project info
+Um frontend simples e minimalista para interagir com a blockchain Xion através de um contador.
 
-**URL**: https://lovable.dev/projects/9aa0ca16-60f6-452d-a61b-1a6bdbf6f7d5
+## 🚀 Características
 
-## How can I edit this code?
+- **Interface Simples**: Apenas tela de login e contador
+- **Conexão Xion**: Integração com a blockchain Xion via Abstraxion
+- **Design Moderno**: Interface limpa e responsiva com Tailwind CSS
+- **Poucos Arquivos**: Estrutura simplificada e fácil de manter
 
-There are several ways of editing your application.
+## 📁 Estrutura do Projeto
 
-**Use Lovable**
+```
+src/
+├── components/
+│   ├── ui/
+│   │   ├── button.tsx          # Componente de botão
+│   │   ├── card.tsx            # Componente de card
+│   │   └── sonner.tsx          # Componente de toast
+│   ├── Counter.tsx             # Componente principal do contador
+│   └── WalletLogin.tsx         # Componente de login da wallet
+├── contexts/
+│   └── XionContext.tsx         # Contexto para gerenciar conexão Xion
+├── config/
+│   └── xion.ts                 # Configuração da blockchain Xion
+├── pages/
+│   └── Index.tsx               # Página principal
+├── lib/
+│   └── utils.ts                # Utilitários
+└── App.tsx                     # Componente raiz
+```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9aa0ca16-60f6-452d-a61b-1a6bdbf6f7d5) and start prompting.
+## 🛠️ Tecnologias
 
-Changes made via Lovable will be committed automatically to this repo.
+### Principais
+- **React 18** - Framework frontend
+- **TypeScript** - Tipagem estática
+- **Vite** - Build tool e dev server
+- **Tailwind CSS** - Framework CSS
 
-**Use your preferred IDE**
+### Blockchain
+- **@burnt-labs/abstraxion** - Conexão com Xion
+- **@tanstack/react-query** - Gerenciamento de estado
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### UI/UX
+- **Lucide React** - Ícones
+- **Sonner** - Notificações toast
+- **Radix UI** - Componentes base
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Como Usar
 
-Follow these steps:
+### Instalação
+```bash
+npm install --legacy-peer-deps
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### Desenvolvimento
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Build
+```bash
+npm run build
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Preview
+```bash
+npm run preview
+```
 
-**Use GitHub Codespaces**
+## 🎯 Funcionalidades
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Tela de Login
+- Conecta com wallet Xion via Abstraxion
+- Interface simples e intuitiva
 
-## What technologies are used for this project?
+### Contador
+- **Incrementar**: Botão `+` para aumentar o valor
+- **Decrementar**: Botão `-` para diminuir o valor
+- **Reset**: Botão para zerar o contador
+- **Salvamento**: Simula salvamento na blockchain Xion
+- **Feedback**: Notificações de sucesso/erro
 
-This project is built with:
+## 🔧 Configuração
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+O arquivo `src/config/xion.ts` contém as configurações da blockchain:
 
-## How can I deploy this project?
+```typescript
+export const XION_CONFIG = {
+  treasuryAddress: 'xion1h4l8zl0yz8hqzpjxlmqn5n5n5n5n5n5n5n5n5n',
+};
+```
 
-Simply open [Lovable](https://lovable.dev/projects/9aa0ca16-60f6-452d-a61b-1a6bdbf6f7d5) and click on Share -> Publish.
+## 📱 Interface
 
-## Can I connect a custom domain to my Lovable project?
+- **Design Responsivo**: Funciona em desktop e mobile
+- **Tema Claro**: Interface limpa e moderna
+- **Feedback Visual**: Loading states e notificações
+- **Acessibilidade**: Componentes acessíveis
 
-Yes, you can!
+## 🔄 Fluxo da Aplicação
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. **Usuário acessa a aplicação**
+2. **Tela de login é exibida**
+3. **Usuário conecta wallet Xion**
+4. **Contador é exibido**
+5. **Usuário pode incrementar/decrementar/resetar**
+6. **Valores são "salvos" na blockchain**
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 🎨 Customização
+
+### Cores e Tema
+Edite as classes Tailwind nos componentes para personalizar:
+- `bg-gradient-to-br from-blue-50 to-indigo-100` - Gradiente de fundo
+- `text-indigo-600` - Cor do contador
+- `bg-blue-600` - Cor dos botões
+
+### Funcionalidades
+Para adicionar novas funcionalidades:
+1. Edite `src/components/Counter.tsx`
+2. Adicione novos métodos no contexto `XionContext.tsx`
+3. Implemente a lógica de blockchain conforme necessário
+
+## 📦 Dependências Mínimas
+
+O projeto foi otimizado para usar apenas as dependências essenciais:
+- Abstraxion para Xion
+- React Query para estado
+- Tailwind para styling
+- Lucide para ícones
+- Sonner para notificações
+
+## 🚀 Deploy
+
+Para fazer deploy:
+1. Execute `npm run build`
+2. Faça upload da pasta `dist/` para seu servidor
+3. Configure o servidor para servir arquivos estáticos
+
+---
+
+**Desenvolvido com ❤️ para a blockchain Xion**

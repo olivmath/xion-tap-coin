@@ -1,6 +1,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useWallet } from '@/blockchain/hooks/useWallet';
 import { useBlockchain } from '@/blockchain/hooks/useBlockchain';
+import { Player, UserStats } from '@/blockchain/types/blockchain';
 
 interface XionContextType {
   // Wallet
@@ -13,8 +14,8 @@ interface XionContextType {
   
   // Blockchain
   saveScore: (score: number) => Promise<boolean>;
-  getLeaderboard: () => Promise<any[]>;
-  getUserStats: () => Promise<any>;
+  getLeaderboard: () => Promise<Player[]>;
+  getUserStats: () => Promise<UserStats | null>;
   isContractAvailable: () => Promise<boolean>;
   isLoading: boolean;
 }
