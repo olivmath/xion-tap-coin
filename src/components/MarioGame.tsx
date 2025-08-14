@@ -44,8 +44,8 @@ const MarioGame: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   
   // Configurações do jogo - sem cooldown de pulo
-  const GROUND_DECAY_RATE = 3;      
-  const GROUND_INCREASE_RATE = 8;   
+  const GROUND_DECAY_RATE = 5;      
+  const GROUND_INCREASE_RATE = 10;   
   const MIN_GROUND_WIDTH = 15;       
   const MAX_GROUND_WIDTH = 100;
 
@@ -88,7 +88,7 @@ const MarioGame: React.FC = () => {
             groundWidth: newGroundWidth
           };
         });
-      }, 1000); // A cada 1 segundo
+      }, 600); // A cada 0.6 segundos
 
       return () => clearInterval(interval);
     }
@@ -144,7 +144,7 @@ const MarioGame: React.FC = () => {
         ...prev,
         isJumping: false
       }));
-    }, 500);
+    }, 200);
 
     // Hide coin animation
     setTimeout(() => {
