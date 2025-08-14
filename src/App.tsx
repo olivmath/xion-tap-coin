@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AbstraxionProvider } from "@burnt-labs/abstraxion";
+import { XION_CONFIG } from "@/config/xion";
 import { XionProvider } from "@/contexts/XionContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -11,7 +12,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const treasuryConfig = {
-  treasury: "xion1svpts9q2ml4ahgc4tuu95w8cqzv988s6mf5mupt5kt56gvdnklks9hzar4",
+  treasury: XION_CONFIG.treasuryAddress,
 };
 
 const App = () => (
