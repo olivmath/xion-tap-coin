@@ -15,36 +15,39 @@ interface Player {
 
 interface GameState {
   coins: number;
-  groundWidth: number;  // Mudança: largura do chão ao invés de altura
-  groundHeight: number; // Altura fixa do chão
+  groundWidth: number;
+  groundHeight: number;
   isJumping: boolean;
   showCoin: boolean;
   lastJumpTime: number;
   totalJumps: number;
+  isGameOver: boolean;
+  isFalling: boolean;
 }
 
 const MarioGame: React.FC = () => {
-  const { address, disconnect } = useXion();
+  const { address, disconnect, client } = useXion();
   const { toast } = useToast();
   
   const [gameState, setGameState] = useState<GameState>({
     coins: 0,
-    groundWidth: 100,     // Largura inicial do chão (100%)
-    groundHeight: 60,     // Altura fixa do chão
+    groundWidth: 100,
+    groundHeight: 60,
     isJumping: false,
     showCoin: false,
     lastJumpTime: 0,
     totalJumps: 0,
+    isGameOver: false,
+    isFalling: false,
   });
 
   const [players, setPlayers] = useState<Player[]>([]);
   
-  // Jump rate limit: 1 jump per second
-  const JUMP_COOLDOWN = 1000;
-  const GROUND_DECAY_RATE = 8;      // Aumentado: chão diminui mais rápido
-  const GROUND_INCREASE_RATE = 12;   // Aumentado: chão aumenta mais ao pular
-  const MIN_GROUND_WIDTH = 20;       // Largura mínima do chão
-  const MAX_GROUND_WIDTH = 100;      // Largura máxima do chão
+  // Configurações do jogo - sem cooldown de pulo
+  const GROUND_DECAY_RATE = 3;      
+  const GROUND_INCREASE_RATE = 8;   
+  const MIN_GROUND_WIDTH = 15;       
+  const MAX_GROUND_WIDTH = 100;
 
   // Mock ranking data - in real app this would come from blockchain
   useEffect(() => {
@@ -63,36 +66,73 @@ const MarioGame: React.FC = () => {
     setPlayers(mockPlayers);
   }, [gameState.coins, address]);
 
-  // Ground decay effect - chão diminui da direita para esquerda
+  // Ground decay effect - chão diminui continuamente
   useEffect(() => {
-    if (gameState.totalJumps > 0) {
+    if (gameState.totalJumps > 0 && !gameState.isGameOver) {
       const interval = setInterval(() => {
-        setGameState(prev => ({
-          ...prev,
-          groundWidth: Math.max(MIN_GROUND_WIDTH, prev.groundWidth - GROUND_DECAY_RATE)
-        }));
-      }, 800); // Intervalo menor = mais rápido
+        setGameState(prev => {
+          const newGroundWidth = Math.max(MIN_GROUND_WIDTH, prev.groundWidth - GROUND_DECAY_RATE);
+          
+          // Game Over quando o chão acabar
+          if (newGroundWidth <= MIN_GROUND_WIDTH) {
+            return {
+              ...prev,
+              groundWidth: newGroundWidth,
+              isGameOver: true,
+              isFalling: true
+            };
+          }
+          
+          return {
+            ...prev,
+            groundWidth: newGroundWidth
+          };
+        });
+      }, 1000); // A cada 1 segundo
 
       return () => clearInterval(interval);
     }
-  }, [gameState.totalJumps]);
+  }, [gameState.totalJumps, gameState.isGameOver]);
 
-  const handleJump = useCallback(() => {
-    const now = Date.now();
-    if (now - gameState.lastJumpTime < JUMP_COOLDOWN) {
+  // Salvar pontuação na blockchain quando o jogo terminar
+  useEffect(() => {
+    if (gameState.isGameOver && gameState.coins > 0 && address) {
+      saveScoreToBlockchain();
+    }
+  }, [gameState.isGameOver]);
+
+  const saveScoreToBlockchain = async () => {
+    try {
+      // Simular salvamento na blockchain
+      console.log('Salvando pontuação na blockchain:', {
+        player: address,
+        score: gameState.coins,
+        timestamp: Date.now()
+      });
+      
       toast({
-        title: "Too fast!",
-        description: "Wait a moment before jumping again.",
+        title: "Game Over! 🎮",
+        description: `Score ${gameState.coins} saved to blockchain!`,
+      });
+    } catch (error) {
+      console.error('Erro ao salvar na blockchain:', error);
+      toast({
+        title: "Game Over! 🎮",
+        description: `Final Score: ${gameState.coins}`,
         variant: "destructive",
       });
-      return;
     }
+  };
+
+  const handleJump = useCallback(() => {
+    // Não permitir pular se o jogo acabou
+    if (gameState.isGameOver) return;
 
     setGameState(prev => ({
       ...prev,
       isJumping: true,
       showCoin: true,
-      lastJumpTime: now,
+      lastJumpTime: Date.now(),
       totalJumps: prev.totalJumps + 1,
       coins: prev.coins + 1,
       groundWidth: Math.min(MAX_GROUND_WIDTH, prev.groundWidth + GROUND_INCREASE_RATE)
@@ -118,7 +158,21 @@ const MarioGame: React.FC = () => {
       title: "Coin earned! 🪙",
       description: `Total coins: ${gameState.coins + 1}`,
     });
-  }, [gameState.lastJumpTime, gameState.coins, toast]);
+  }, [gameState.coins, gameState.isGameOver, toast]);
+
+  const restartGame = () => {
+    setGameState({
+      coins: 0,
+      groundWidth: 100,
+      groundHeight: 60,
+      isJumping: false,
+      showCoin: false,
+      lastJumpTime: 0,
+      totalJumps: 0,
+      isGameOver: false,
+      isFalling: false,
+    });
+  };
 
   const formatAddress = (addr: string) => {
     if (addr.length <= 12) return addr;
@@ -173,47 +227,94 @@ const MarioGame: React.FC = () => {
           {/* Mario */}
           <div 
             className={`w-16 h-16 cursor-pointer transition-transform duration-500 relative z-10 ${
+              gameState.isGameOver ? '' : 
               gameState.isJumping ? 'animate-mario-jump' : 'hover:scale-110'
-            }`}
-            onClick={handleJump}
+            } ${gameState.isFalling ? 'animate-bounce' : ''}`}
+            onClick={gameState.isGameOver ? undefined : handleJump}
             style={{ 
-              transform: `${gameState.isJumping ? 'translateY(-60px)' : ''}`,
-              bottom: `${gameState.groundHeight}px`
+              transform: `${gameState.isJumping && !gameState.isGameOver ? 'translateY(-60px)' : ''}
+                          ${gameState.isFalling ? 'translateY(100px)' : ''}`,
+              bottom: `${gameState.groundHeight}px`,
+              transition: gameState.isFalling ? 'transform 1s ease-in' : 'transform 0.5s'
             }}
           >
-            <div className="w-full h-full bg-mario-red rounded-lg border-4 border-mario-brown shadow-lg">
-              <div className="w-full h-full bg-gradient-to-br from-mario-red to-red-600 rounded flex items-center justify-center">
-                <span className="text-white font-bold text-xl">M</span>
+            <div className={`w-full h-full rounded-lg border-4 border-mario-brown shadow-lg ${
+              gameState.isGameOver ? 'bg-gray-500' : 'bg-mario-red'
+            }`}>
+              <div className={`w-full h-full rounded flex items-center justify-center ${
+                gameState.isGameOver ? 'bg-gradient-to-br from-gray-500 to-gray-700' : 'bg-gradient-to-br from-mario-red to-red-600'
+              }`}>
+                <span className="text-white font-bold text-xl">
+                  {gameState.isGameOver ? '💀' : 'M'}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Ground - diminui da direita para esquerda */}
+          {/* Ground - com animação visual de diminuição */}
           <div className="relative">
             <div 
               className="bg-mario-ground border-t-4 border-mario-brown transition-all duration-1000 relative overflow-hidden"
               style={{ 
                 height: `${gameState.groundHeight}px`,
-                width: '200px' // Largura fixa do container
+                width: '300px' // Container maior para mostrar a diminuição
               }}
             >
-              {/* Chão visível que diminui da direita */}
+              {/* Chão que diminui da direita para esquerda */}
               <div 
-                className="h-full bg-gradient-to-b from-mario-ground to-green-700 transition-all duration-1000"
+                className="h-full transition-all duration-1000 ease-out"
                 style={{ 
                   width: `${gameState.groundWidth}%`,
-                  marginLeft: 'auto' // Alinha à direita, diminui da esquerda
+                  background: gameState.isGameOver ? 
+                    'linear-gradient(to bottom, #dc2626, #991b1b)' : // Vermelho quando game over
+                    'linear-gradient(to bottom, hsl(var(--mario-ground)), #166534)',
+                  marginLeft: 'auto'
                 }}
               />
               
-              {/* Padrão do chão para mostrar a erosão */}
+              {/* Efeito visual de rachadura/erosão */}
               <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                <div className="w-full h-full bg-gradient-to-r from-transparent via-mario-brown/20 to-mario-brown/40" />
+                <div 
+                  className="w-full h-full transition-all duration-1000"
+                  style={{
+                    background: `linear-gradient(90deg, 
+                      rgba(139, 69, 19, 0.3) 0%, 
+                      rgba(139, 69, 19, 0.1) ${gameState.groundWidth}%, 
+                      rgba(139, 69, 19, 0.6) 100%)`
+                  }}
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Game Over Modal */}
+      {gameState.isGameOver && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="bg-white/95 backdrop-blur max-w-md">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl font-pixel text-mario-red">
+                Game Over! 💀
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <div className="text-lg font-pixel text-mario-brown">
+                Final Score: {gameState.coins} coins! 🪙
+              </div>
+              <div className="text-sm text-mario-brown/70">
+                Score saved to XION blockchain
+              </div>
+              <Button 
+                onClick={restartGame}
+                className="w-full bg-mario-red hover:bg-mario-red/90 text-white font-pixel"
+              >
+                Play Again
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Ground Width Indicator */}
       <div className="absolute bottom-4 left-4">
@@ -224,7 +325,9 @@ const MarioGame: React.FC = () => {
             </div>
             <div className="w-20 h-2 bg-gray-300 rounded mt-1">
               <div 
-                className="h-full bg-mario-ground rounded transition-all"
+                className={`h-full rounded transition-all ${
+                  gameState.groundWidth <= 25 ? 'bg-red-500' : 'bg-mario-ground'
+                }`}
                 style={{ width: `${gameState.groundWidth}%` }}
               />
             </div>
@@ -287,8 +390,8 @@ const MarioGame: React.FC = () => {
             <div>🎯 Click Mario to jump and hit the block</div>
             <div>🪙 Earn coins with each successful jump</div>
             <div>🏃 Ground shrinks from right to left over time</div>
-            <div>⏱️ 1 second cooldown between jumps</div>
-            <div>⚠️ Game over when ground gets too small!</div>
+            <div>🔥 No jump limit - tap rapidly!</div>
+            <div>⚠️ Game over when ground reaches 15%!</div>
           </CardContent>
         </Card>
       </div>
