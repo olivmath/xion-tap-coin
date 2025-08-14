@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
 @import "@burnt-labs/abstraxion/dist/index.css";
 @import "@burnt-labs/ui/dist/index.css";
 
@@ -42,15 +42,18 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* Mario-themed colors */
-    --mario-red: 0 85% 45%;
-    --mario-blue: 220 85% 45%;
-    --mario-gold: 45 95% 55%;
-    --mario-brown: 30 40% 25%;
-    --mario-green: 120 60% 40%;
-    --mario-sky: 200 85% 70%;
-    --mario-ground: 120 50% 35%;
-    --mario-block: 40 80% 50%;
+    /* Retro 8-bit Tap-to-Earn colors */
+    --retro-cyan: 180 100% 50%;
+    --retro-yellow: 60 100% 50%;
+    --retro-green: 120 100% 40%;
+    --retro-red: 0 100% 50%;
+    --retro-purple: 270 100% 50%;
+    --retro-blue: 240 100% 50%;
+    --retro-dark: 240 20% 10%;
+    --retro-darker: 240 30% 5%;
+    --retro-orange: 30 100% 50%;
+    --retro-pink: 300 100% 70%;
+    --retro-lime: 90 100% 50%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -104,6 +107,31 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+  }
+
+  /* Retro 8-bit Global Styles */
+  .retro-font {
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  .cyber-font {
+    font-family: 'Orbitron', monospace;
+  }
+
+  .retro-glow {
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+
+  .retro-border {
+    border-style: solid;
+    border-width: 4px;
+    border-radius: 0;
+  }
+
+  .pixel-perfect {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
   }
 
   body {
