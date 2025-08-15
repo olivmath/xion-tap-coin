@@ -89,6 +89,15 @@ const Counter: React.FC = () => {
               X
             </button>
 
+            {/* Logo */}
+            <div className="mx-auto w-16 h-16 flex items-center justify-center mb-4">
+              <img 
+                src="/logo512x512.png" 
+                alt="Logo" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+
             <div>
               <h1 className="text-2xl font-bold pixel-shadow" style={{
                 color: 'hsl(var(--pixel-white))'

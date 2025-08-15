@@ -18,14 +18,13 @@ const WalletLogin: React.FC = () => {
         backgroundColor: 'hsl(var(--pixel-black))'
       }}>
         <div className="text-center space-y-8 p-8">
-          {/* Ícone 8-bit simples */}
-          <div className="mx-auto w-16 h-16 pixel-border flex items-center justify-center" style={{
-            backgroundColor: 'hsl(var(--pixel-white))'
-          }}>
-            <div className="w-8 h-8" style={{
-              backgroundColor: 'hsl(var(--pixel-black))',
-              clipPath: 'polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%)'
-            }}></div>
+          {/* Logo */}
+          <div className="mx-auto w-24 h-24 flex items-center justify-center">
+            <img 
+              src="/logo512x512.png" 
+              alt="Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
           
           {/* Título */}
