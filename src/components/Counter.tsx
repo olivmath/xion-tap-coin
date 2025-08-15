@@ -1,43 +1,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useWallet } from '@/blockchain/hooks/useWallet';
 import { useBlockchain } from '@/blockchain/hooks/useBlockchain';
-import { UserStats, Player } from '@/blockchain/types/blockchain';
-
+import { Player } from '@/blockchain/types/blockchain';
 import { toast } from 'sonner';
 
 /**
  * Tap-to-Earn Game - Estilo 8-bit Minimalista
  * Jogo de cliques com contador regressivo integrado à blockchain Xion
- * Navegação por teclado: ESPAÇO para clicar, ENTER para ações
  */
 const Counter: React.FC = () => {
   const { address, disconnect, formatAddress } = useWallet();
-  const { saveScore, getUserStats, getLeaderboard, isLoading } = useBlockchain();
+  const { saveScore, getLeaderboard, isLoading } = useBlockchain();
   const [count, setCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const [gameActive, setGameActive] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
-  const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
 
-
-
-  // Carregar estatísticas do usuário e leaderboard ao conectar
   useEffect(() => {
     const loadData = async () => {
-      if (address) {
-        const stats = await getUserStats();
-        setUserStats(stats);
-      }
-      // Carregar leaderboard da blockchain
       const players = await getLeaderboard();
-      setLeaderboard(players.slice(0, 3)); // Mostrar apenas top 3
+      setLeaderboard(players);
     };
     loadData();
-  }, [address, getUserStats, getLeaderboard]);
+  }, [address, getLeaderboard]);
 
-  // Timer do jogo
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (gameActive && timeLeft > 0) {
@@ -50,25 +38,18 @@ const Counter: React.FC = () => {
     return () => clearInterval(interval);
   }, [gameActive, timeLeft]);
 
-  // Finalizar jogo e salvar score
   const endGame = useCallback(async () => {
     setGameActive(false);
     setFinalScore(count);
     
-    // Salvar score na blockchain
     const success = await saveScore(count);
     if (success) {
       toast.success(`Score ${count} salvo na blockchain Xion!`);
-      // Recarregar leaderboard da blockchain
       const players = await getLeaderboard();
-      setLeaderboard(players.slice(0, 3)); // Mostrar apenas top 3
-      // Recarregar estatísticas
-      const stats = await getUserStats();
-      setUserStats(stats);
+      setLeaderboard(players);
     }
-  }, [count, saveScore, getUserStats, address, formatAddress]);
+  }, [count, saveScore, getLeaderboard]);
 
-  // Iniciar jogo
   const startGame = () => {
     setCount(0);
     setTimeLeft(10);
@@ -77,7 +58,6 @@ const Counter: React.FC = () => {
     setFinalScore(null);
   };
 
-  // Reiniciar jogo
   const resetGame = () => {
     setCount(0);
     setTimeLeft(10);
@@ -86,26 +66,21 @@ const Counter: React.FC = () => {
     setFinalScore(null);
   };
 
-  // Clique durante o jogo
   const handleClick = () => {
     if (gameActive) {
       setCount(prev => prev + 1);
     }
   };
 
-
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4 pixel-bg" style={{
       backgroundColor: 'hsl(var(--pixel-black))'
     }}>
       <div className="w-full max-w-sm">
-        {/* Card principal - Estilo 8-bit Minimalista */}
         <div className="pixel-border" style={{
           backgroundColor: 'hsl(var(--pixel-black))'
         }}>
           <div className="p-6 text-center space-y-6 relative">
-            {/* Botão Desconectar */}
             <button
               onClick={disconnect}
               className="absolute top-2 right-2 w-8 h-8 btn-danger text-xs font-bold"
@@ -114,7 +89,6 @@ const Counter: React.FC = () => {
               X
             </button>
 
-            {/* Título 8-bit */}
             <div>
               <h1 className="text-2xl font-bold pixel-shadow" style={{
                 color: 'hsl(var(--pixel-white))'
@@ -128,7 +102,6 @@ const Counter: React.FC = () => {
                </div>
              </div>
 
-            {/* Timer 8-bit */}
             {gameStarted && (
               <div className="pixel-border p-3" style={{
                 backgroundColor: 'hsl(var(--pixel-yellow))',
@@ -140,7 +113,6 @@ const Counter: React.FC = () => {
               </div>
             )}
 
-            {/* Display do Score - Estilo 8-bit */}
             <div className="pixel-border p-4" style={{
               backgroundColor: 'hsl(var(--pixel-white))',
               color: 'hsl(var(--pixel-black))'
@@ -153,25 +125,14 @@ const Counter: React.FC = () => {
               </div>
             </div>
             
-            {/* Status do jogo */}
             <div className="text-sm" style={{
               color: 'hsl(var(--pixel-white))'
             }}>
               {!gameStarted ? 'PRESS START' : 
-               gameActive ? 'TAP OR SPACE' : 
+               gameActive ? 'TAP TO EARN' : 
                finalScore !== null ? `FINAL: ${finalScore}` : 'READY'}
             </div>
 
-            {/* Instruções de teclado */}
-            <div className="text-xs" style={{
-              color: 'hsl(var(--pixel-green))'
-            }}>
-              {!gameStarted ? 'SPACE/ENTER TO START' :
-               gameActive ? 'SPACE TO TAP' :
-               'SPACE/ENTER TO RESTART'}
-            </div>
-
-            {/* Botões 8-bit */}
             {!gameStarted ? (
               <button
                 onClick={startGame}
@@ -211,7 +172,6 @@ const Counter: React.FC = () => {
               </div>
             )}
 
-            {/* Leaderboard 8-bit */}
             <div className="space-y-3">
               <h2 className="text-lg font-bold pixel-shadow" style={{
                 color: 'hsl(var(--pixel-white))'
@@ -221,25 +181,17 @@ const Counter: React.FC = () => {
               
               <div className="space-y-2">
                 {leaderboard.length > 0 ? leaderboard.map((player, index) => {
-                  // Degradê de cinza: mais escuro para melhor posição
-                  const grayValues = [
-                    { bg: '#404040', text: '#ffffff' }, // 1º lugar - cinza escuro
-                    { bg: '#606060', text: '#ffffff' }, // 2º lugar - cinza médio
-                    { bg: '#808080', text: '#ffffff' }  // 3º lugar - cinza claro
-                  ];
-                  const color = grayValues[index] || grayValues[2];
-                  
                   return (
                     <div
-                      key={player.address}
+                      key={`${player.address}-${player.rank}-${index}`}
                       className="pixel-border p-2"
                       style={{
-                        backgroundColor: color.bg,
-                        color: color.text
+                        backgroundColor: '#606060',
+                        color: '#ffffff'
                       }}
                     >
                       <div className="text-xs font-bold">
-                        #{player.rank} {player.score.toString().padStart(4, '0')} - {player.address}
+                        #{player.rank} {player.score.toString().padStart(4, '0')} - {formatAddress(player.address)}
                       </div>
                     </div>
                   );

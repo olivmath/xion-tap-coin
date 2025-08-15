@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
-import { XionBlockchainService } from '../services/XionBlockchainService';
-import { Player, UserStats } from '../types/blockchain';
-import { useWallet } from './useWallet';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useCallback, useEffect } from "react";
+import { XionBlockchainService } from "../services/XionBlockchainService";
+import { Player } from "../types/blockchain";
+import { useWallet } from "./useWallet";
+import { toast } from "sonner";
 
 /**
  * Hook para interações com a blockchain
@@ -10,9 +10,10 @@ import { useToast } from '@/hooks/use-toast';
  */
 export const useBlockchain = () => {
   const { client, address } = useWallet();
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [service, setService] = useState(() => new XionBlockchainService(client));
+  const [service, setService] = useState<XionBlockchainService>(
+    () => new XionBlockchainService(client)
+  );
 
   // Atualizar o serviço quando o cliente mudar
   useEffect(() => {
@@ -21,76 +22,60 @@ export const useBlockchain = () => {
     }
   }, [client]);
 
-  const saveScore = useCallback(async (score: number) => {
-    if (!address) {
-      toast({
-        title: "Erro",
-        description: "Carteira não conectada",
-        variant: "destructive",
-      });
-      return false;
-    }
+  const saveScore = useCallback(
+    async (score: number) => {
+      if (!address) {
+        toast.error("Carteira não conectada");
+        return false;
+      }
 
-    setIsLoading(true);
-    try {
-      await service.saveScore(address, score);
-      toast({
-        title: "Sucesso! 🎮",
-        description: `Pontuação ${score} salva na blockchain!`,
-      });
-      return true;
-    } catch (error) {
-      console.error('Erro ao salvar pontuação:', error);
-      toast({
-        title: "Erro",
-        description: "Falha ao salvar na blockchain",
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [address, service, toast]);
+      setIsLoading(true);
+      try {
+        await service.saveScore(address, score);
+        toast.success(`Pontuação ${score} salva na blockchain! 🎮`);
+        return true;
+      } catch (error) {
+        console.error("Erro ao salvar pontuação:", error);
+        toast.error("Falha ao salvar na blockchain");
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [address, service, toast]
+  );
 
   const getLeaderboard = useCallback(async (): Promise<Player[]> => {
+    if (!client) {
+      return [];
+    }
+
     try {
       return await service.getLeaderboard();
     } catch (error) {
-      console.error('Erro ao buscar leaderboard:', error);
-      toast({
-        title: "Erro",
-        description: "Falha ao carregar ranking",
-        variant: "destructive",
-      });
+      console.error("Erro ao buscar leaderboard:", error);
+      toast.error("Falha ao carregar ranking");
       return [];
     }
-  }, [service, toast]);
+  }, [client, service, toast]);
 
-  const getUserStats = useCallback(async (): Promise<UserStats | null> => {
-    if (!address) return null;
+  const totalGames = useCallback(async (): Promise<number> => {
+    if (!client) {
+      return 0;
+    }
 
     try {
-      return await service.getUserStats(address);
+      return await service.totalGames();
     } catch (error) {
-      console.error('Erro ao buscar estatísticas:', error);
-      return null;
+      console.error("Erro ao verificar contrato:", error);
+      return 0;
     }
-  }, [address, service]);
-
-  const isContractAvailable = useCallback(async (): Promise<boolean> => {
-    try {
-      return await service.isContractAvailable();
-    } catch (error) {
-      console.error('Erro ao verificar contrato:', error);
-      return false;
-    }
-  }, [service]);
+  }, [client, service]);
 
   return {
     saveScore,
     getLeaderboard,
-    getUserStats,
-    isContractAvailable,
+    totalGames,
     isLoading,
   };
 };

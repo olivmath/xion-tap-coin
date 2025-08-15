@@ -15,8 +15,6 @@ interface XionContextType {
   // Blockchain
   saveScore: (score: number) => Promise<boolean>;
   getLeaderboard: () => Promise<Player[]>;
-  getUserStats: () => Promise<UserStats | null>;
-  isContractAvailable: () => Promise<boolean>;
   isLoading: boolean;
 }
 
