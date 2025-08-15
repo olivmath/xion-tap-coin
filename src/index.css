@@ -124,41 +124,77 @@
   }
 
   /* Botões com cores específicas */
-  .btn-primary {
-    background-color: hsl(var(--pixel-white));
-    color: hsl(var(--pixel-black));
-  }
+.btn-primary {
+  background-color: hsl(var(--pixel-white));
+  color: hsl(var(--pixel-black));
+  transition: all 0.1s ease;
+  box-shadow: 4px 4px 0px hsl(var(--pixel-black));
+}
 
-  .btn-primary:hover {
-    background-color: hsl(var(--pixel-white) / 0.9);
-  }
+.btn-primary:hover {
+  background-color: hsl(var(--pixel-white) / 0.9);
+  transform: translate(1px, 1px);
+  box-shadow: 3px 3px 0px hsl(var(--pixel-black));
+}
 
-  .btn-success {
-    background-color: hsl(var(--pixel-green));
-    color: hsl(var(--pixel-black));
-  }
+.btn-primary:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
 
-  .btn-success:hover {
-    background-color: hsl(var(--pixel-green) / 0.9);
-  }
+.btn-success {
+  background-color: hsl(var(--pixel-green));
+  color: hsl(var(--pixel-black));
+  transition: all 0.1s ease;
+  box-shadow: 4px 4px 0px hsl(var(--pixel-black));
+}
 
-  .btn-warning {
-    background-color: hsl(var(--pixel-yellow));
-    color: hsl(var(--pixel-black));
-  }
+.btn-success:hover {
+  background-color: hsl(var(--pixel-green) / 0.9);
+  transform: translate(1px, 1px);
+  box-shadow: 3px 3px 0px hsl(var(--pixel-black));
+}
 
-  .btn-warning:hover {
-    background-color: hsl(var(--pixel-yellow) / 0.9);
-  }
+.btn-success:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
 
-  .btn-danger {
-    background-color: hsl(var(--pixel-red));
-    color: hsl(var(--pixel-white));
-  }
+.btn-warning {
+  background-color: hsl(var(--pixel-yellow));
+  color: hsl(var(--pixel-black));
+  transition: all 0.1s ease;
+  box-shadow: 4px 4px 0px hsl(var(--pixel-black));
+}
 
-  .btn-danger:hover {
-    background-color: hsl(var(--pixel-red) / 0.9);
-  }
+.btn-warning:hover {
+  background-color: hsl(var(--pixel-yellow) / 0.9);
+  transform: translate(1px, 1px);
+  box-shadow: 3px 3px 0px hsl(var(--pixel-black));
+}
+
+.btn-warning:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.btn-danger {
+  background-color: hsl(var(--pixel-red));
+  color: hsl(var(--pixel-white));
+  transition: all 0.1s ease;
+  box-shadow: 4px 4px 0px hsl(var(--pixel-black));
+}
+
+.btn-danger:hover {
+  background-color: hsl(var(--pixel-red) / 0.9);
+  transform: translate(1px, 1px);
+  box-shadow: 3px 3px 0px hsl(var(--pixel-black));
+}
+
+.btn-danger:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
 
   body {
     @apply bg-background text-foreground;
