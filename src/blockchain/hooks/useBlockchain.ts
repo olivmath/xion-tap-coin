@@ -32,7 +32,6 @@ export const useBlockchain = () => {
       setIsLoading(true);
       try {
         await service.saveScore(address, score);
-        toast.success(`Pontuação ${score} salva na blockchain! 🎮`);
         return true;
       } catch (error) {
         console.error("Erro ao salvar pontuação:", error);

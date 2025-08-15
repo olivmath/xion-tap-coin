@@ -30,7 +30,7 @@
     ]
   },
   "treasuryParams": {
-    "redirect_url": "https://preview--xion-tap-coin.lovable.app",
+    "redirect_url": "https://xion-tap-coin.vercel.app",
     "icon_url": "https://yellow-accused-earwig-831.mypinata.cloud/ipfs/bafkreihrnxb64o6ylbh5x4yuruxyqcgaovccxp332t2gtw6swadxohtj4m",
     "metadata": "{}"
   }

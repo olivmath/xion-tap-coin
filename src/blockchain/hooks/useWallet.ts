@@ -24,10 +24,9 @@ export const useWallet = () => {
   };
 
   const formatAddress = (address: string) => {
-    if (address.length <= 12) return address;
-    return `${address.slice(0, 8)}...${address.slice(-4)}`;
+    if (address.length <= 8) return address;
+    return `${address.slice(0, 4)}...${address.slice(-4)}`;
   };
-
   return {
     address: account?.bech32Address,
     isConnected,
