@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useWallet } from '@/blockchain/hooks/useWallet';
 import { useBlockchain } from '@/blockchain/hooks/useBlockchain';
-import { UserStats } from '@/blockchain/types/blockchain';
+import { UserStats, Player } from '@/blockchain/types/blockchain';
 
 import { toast } from 'sonner';
 
@@ -12,31 +12,30 @@ import { toast } from 'sonner';
  */
 const Counter: React.FC = () => {
   const { address, disconnect, formatAddress } = useWallet();
-  const { saveScore, getUserStats, isLoading } = useBlockchain();
+  const { saveScore, getUserStats, getLeaderboard, isLoading } = useBlockchain();
   const [count, setCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const [gameActive, setGameActive] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
-  const [leaderboard, setLeaderboard] = useState([
-    { score: 145, address: 'xion1rvz...9ptm' },
-    { score: 125, address: 'xion1rvz...9ptm' },
-    { score: 105, address: 'xion1rvz...9ptm' }
-  ]);
+  const [leaderboard, setLeaderboard] = useState<Player[]>([]);
 
 
 
-  // Carregar estatísticas do usuário ao conectar
+  // Carregar estatísticas do usuário e leaderboard ao conectar
   useEffect(() => {
-    const loadUserStats = async () => {
+    const loadData = async () => {
       if (address) {
         const stats = await getUserStats();
         setUserStats(stats);
       }
+      // Carregar leaderboard da blockchain
+      const players = await getLeaderboard();
+      setLeaderboard(players.slice(0, 3)); // Mostrar apenas top 3
     };
-    loadUserStats();
-  }, [address, getUserStats]);
+    loadData();
+  }, [address, getUserStats, getLeaderboard]);
 
   // Timer do jogo
   useEffect(() => {
@@ -60,9 +59,9 @@ const Counter: React.FC = () => {
     const success = await saveScore(count);
     if (success) {
       toast.success(`Score ${count} salvo na blockchain Xion!`);
-      // Atualizar leaderboard localmente
-      const newEntry = { score: count, address: address ? formatAddress(address) : 'Anônimo' };
-      setLeaderboard(prev => [...prev, newEntry].sort((a, b) => b.score - a.score).slice(0, 3));
+      // Recarregar leaderboard da blockchain
+      const players = await getLeaderboard();
+      setLeaderboard(players.slice(0, 3)); // Mostrar apenas top 3
       // Recarregar estatísticas
       const stats = await getUserStats();
       setUserStats(stats);
@@ -221,7 +220,7 @@ const Counter: React.FC = () => {
               </h2>
               
               <div className="space-y-2">
-                {leaderboard.map((player, index) => {
+                {leaderboard.length > 0 ? leaderboard.map((player, index) => {
                   // Degradê de cinza: mais escuro para melhor posição
                   const grayValues = [
                     { bg: '#404040', text: '#ffffff' }, // 1º lugar - cinza escuro
@@ -232,7 +231,7 @@ const Counter: React.FC = () => {
                   
                   return (
                     <div
-                      key={index}
+                      key={player.address}
                       className="pixel-border p-2"
                       style={{
                         backgroundColor: color.bg,
@@ -240,11 +239,20 @@ const Counter: React.FC = () => {
                       }}
                     >
                       <div className="text-xs font-bold">
-                        #{index + 1} {player.score.toString().padStart(4, '0')} - {player.address}
+                        #{player.rank} {player.score.toString().padStart(4, '0')} - {player.address}
                       </div>
                     </div>
                   );
-                })}
+                }) : (
+                  <div className="pixel-border p-2" style={{
+                    backgroundColor: '#606060',
+                    color: '#ffffff'
+                  }}>
+                    <div className="text-xs font-bold text-center">
+                      CARREGANDO RANKING...
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

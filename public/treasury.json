@@ -1,0 +1,37 @@
+{
+  "treasuryAdmin": "xion16wv294qw7chfspmek2nq3tdntu0n6r93aqp7vud8a2h27hf4kfxqd4qsqk",
+  "treasuryFeeConfig": {
+    "description": "SAMPLE - Enter your allowance description here",
+    "allowance": {
+      "type_url": "/cosmos.feegrant.v1beta1.BasicAllowance",
+      "value": "Cg8KBXV4aW9uEgYxMDAwMDA="
+    },
+    "expiration": null
+  },
+  "treasuryGrantConfig": [
+    {
+      "typeUrl": "/cosmwasm.wasm.v1.MsgExecuteContract",
+      "grantConfig": {
+        "description": "Counter Rank Permission",
+        "authorization": {
+          "type_url": "/cosmwasm.wasm.v1.ContractExecutionAuthorization",
+          "value": "CqgBCj94aW9uMTR5dTU3ZTN4aDBmOWo0eHF5OGVkNjM1MDc0NzQ5bnA4YXVxMDk2OXZoanpxNTMyemFjZHM3cmwzODISOQofL2Nvc213YXNtLndhc20udjEuTWF4RnVuZHNMaW1pdBIWChQKBXV4aW9uEgsxMDAwMDAwMDAwMBoqCigvY29zbXdhc20ud2FzbS52MS5BbGxvd0FsbE1lc3NhZ2VzRmlsdGVy"
+        },
+        "optional": false
+      }
+    }
+  ],
+  "decodedAllowance": {
+    "spendLimit": [
+      {
+        "denom": "uxion",
+        "amount": "100000"
+      }
+    ]
+  },
+  "treasuryParams": {
+    "redirect_url": "https://preview--xion-tap-coin.lovable.app",
+    "icon_url": "https://yellow-accused-earwig-831.mypinata.cloud/ipfs/bafkreihrnxb64o6ylbh5x4yuruxyqcgaovccxp332t2gtw6swadxohtj4m",
+    "metadata": "{}"
+  }
+}

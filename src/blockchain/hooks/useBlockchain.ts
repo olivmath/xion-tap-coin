@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { XionBlockchainService } from '../services/XionBlockchainService';
 import { Player, UserStats } from '../types/blockchain';
 import { useWallet } from './useWallet';
@@ -12,7 +12,14 @@ export const useBlockchain = () => {
   const { client, address } = useWallet();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [service] = useState(() => new XionBlockchainService(client));
+  const [service, setService] = useState(() => new XionBlockchainService(client));
+
+  // Atualizar o serviço quando o cliente mudar
+  useEffect(() => {
+    if (client) {
+      setService(new XionBlockchainService(client));
+    }
+  }, [client]);
 
   const saveScore = useCallback(async (score: number) => {
     if (!address) {
