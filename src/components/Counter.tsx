@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useWallet } from '@/blockchain/hooks/useWallet';
 import { useBlockchain } from '@/blockchain/hooks/useBlockchain';
 import { UserStats } from '@/blockchain/types/blockchain';
-import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+
 import { toast } from 'sonner';
 
 /**
@@ -94,28 +94,7 @@ const Counter: React.FC = () => {
     }
   };
 
-  // Hooks de navegação por teclado
-  const startButton = useKeyboardNavigation<HTMLButtonElement>({
-    onSpacePress: startGame,
-    onEnterPress: startGame,
-    disabled: gameStarted
-  });
 
-  const tapButton = useKeyboardNavigation<HTMLButtonElement>({
-    onSpacePress: handleClick,
-    disabled: !gameActive
-  });
-
-  const resetButton = useKeyboardNavigation<HTMLButtonElement>({
-    onSpacePress: resetGame,
-    onEnterPress: resetGame,
-    disabled: isLoading || gameActive
-  });
-
-  const disconnectButton = useKeyboardNavigation<HTMLButtonElement>({
-    onSpacePress: disconnect,
-    onEnterPress: disconnect
-  });
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 pixel-bg" style={{
@@ -129,9 +108,8 @@ const Counter: React.FC = () => {
           <div className="p-6 text-center space-y-6 relative">
             {/* Botão Desconectar */}
             <button
-              ref={disconnectButton.elementRef}
               onClick={disconnect}
-              className={`absolute top-2 right-2 w-8 h-8 btn-danger text-xs font-bold ${disconnectButton.className}`}
+              className="absolute top-2 right-2 w-8 h-8 btn-danger text-xs font-bold"
               title="Desconectar"
             >
               X
@@ -197,17 +175,15 @@ const Counter: React.FC = () => {
             {/* Botões 8-bit */}
             {!gameStarted ? (
               <button
-                ref={startButton.elementRef}
                 onClick={startGame}
-                className={`w-full h-16 btn-success pixel-border text-lg font-bold ${startButton.className}`}
+                className="w-full h-16 btn-success pixel-border text-lg font-bold"
               >
                 START GAME
               </button>
             ) : gameActive ? (
               <button
-                ref={tapButton.elementRef}
                 onClick={handleClick}
-                className={`w-full h-32 btn-primary pixel-border text-2xl font-bold ${tapButton.className}`}
+                className="w-full h-32 btn-primary pixel-border text-2xl font-bold"
               >
                 TAP!
               </button>
@@ -227,10 +203,9 @@ const Counter: React.FC = () => {
                   </div>
                 )}
                 <button
-                  ref={resetButton.elementRef}
                   onClick={resetGame}
                   disabled={isLoading}
-                  className={`w-full h-16 btn-warning pixel-border text-lg font-bold ${resetButton.className} disabled:opacity-50`}
+                  className="w-full h-16 btn-warning pixel-border text-lg font-bold disabled:opacity-50"
                 >
                   PLAY AGAIN
                 </button>

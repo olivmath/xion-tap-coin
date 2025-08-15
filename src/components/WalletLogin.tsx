@@ -1,16 +1,10 @@
 import React from 'react';
 import { useXion } from '@/contexts/XionContext';
 import { Abstraxion, useModal } from '@burnt-labs/abstraxion';
-import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 const WalletLogin: React.FC = () => {
   const { isConnected } = useXion();
   const [showModal, setShowModal] = useModal();
-
-  const connectButton = useKeyboardNavigation<HTMLButtonElement>({
-    onSpacePress: () => setShowModal(true),
-    onEnterPress: () => setShowModal(true)
-  });
 
   if (isConnected) {
     return null;
@@ -57,9 +51,8 @@ const WalletLogin: React.FC = () => {
           
           {/* Botão de conexão */}
           <button 
-            ref={connectButton.elementRef}
             onClick={() => setShowModal(true)}
-            className={`w-full h-16 btn-primary pixel-border text-lg font-bold ${connectButton.className}`}
+            className="w-full h-16 btn-primary pixel-border text-lg font-bold"
             style={{
               boxShadow: '4px 4px 0px hsl(var(--pixel-black))'
             }}
@@ -67,12 +60,7 @@ const WalletLogin: React.FC = () => {
             CONNECT WALLET
           </button>
           
-          {/* Instruções de teclado */}
-          <div className="text-xs" style={{
-            color: 'hsl(var(--pixel-green))'
-          }}>
-            PRESS SPACE OR ENTER
-          </div>
+
           
           <Abstraxion onClose={() => setShowModal(false)} />
           
