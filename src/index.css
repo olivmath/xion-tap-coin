@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "@burnt-labs/abstraxion/dist/index.css";
 @import "@burnt-labs/ui/dist/index.css";
 
@@ -6,54 +6,46 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* 8-bit Minimalista - Apenas 5 cores permitidas */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 0%; /* Preto */
+    --foreground: 0 0% 100%; /* Branco */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 0%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 0%;
+    --muted-foreground: 0 0% 100%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 0% 100%;
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 100% 50%; /* Vermelho */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 0 0% 100%;
+    --input: 0 0% 100%;
+    --ring: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --radius: 0px; /* Sem bordas arredondadas para estilo 8-bit */
 
-    /* Retro 8-bit Tap-to-Earn colors */
-    --retro-cyan: 180 100% 50%;
-    --retro-yellow: 60 100% 50%;
-    --retro-green: 120 100% 40%;
-    --retro-red: 0 100% 50%;
-    --retro-purple: 270 100% 50%;
-    --retro-blue: 240 100% 50%;
-    --retro-dark: 240 20% 10%;
-    --retro-darker: 240 30% 5%;
-    --retro-orange: 30 100% 50%;
-    --retro-pink: 300 100% 70%;
-    --retro-lime: 90 100% 50%;
+    /* Paleta 8-bit minimalista - apenas 5 cores */
+    --pixel-black: 0 0% 0%;
+    --pixel-white: 0 0% 100%;
+    --pixel-red: 0 100% 50%;
+    --pixel-green: 120 100% 25%;
+    --pixel-yellow: 60 100% 50%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -109,23 +101,20 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  /* Retro 8-bit Global Styles */
-  .retro-font {
-    font-family: 'Press Start 2P', monospace;
+  /* Estilos 8-bit minimalistas */
+  .pixel-font {
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    font-weight: normal;
+    letter-spacing: 1px;
   }
 
-  .cyber-font {
-    font-family: 'Orbitron', monospace;
+  .pixel-shadow {
+    text-shadow: 2px 2px 0px hsl(var(--pixel-black));
   }
 
-  .retro-glow {
-    filter: drop-shadow(0 0 10px currentColor);
-  }
-
-  .retro-border {
-    border-style: solid;
-    border-width: 4px;
-    border-radius: 0;
+  .pixel-border {
+    border: 3px solid hsl(var(--pixel-white));
+    box-shadow: 3px 3px 0px hsl(var(--pixel-black));
   }
 
   .pixel-perfect {
@@ -134,7 +123,64 @@ All colors MUST be HSL.
     image-rendering: crisp-edges;
   }
 
+  /* Elementos clicáveis com suporte a teclado */
+  .clickable {
+    cursor: pointer;
+    transition: all 0.1s ease;
+    outline: none;
+  }
+
+  .clickable:focus {
+    outline: 3px solid hsl(var(--pixel-yellow));
+    outline-offset: 2px;
+  }
+
+  .clickable:active,
+  .clickable.pressed {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px hsl(var(--pixel-black));
+  }
+
+  /* Estados de cores para elementos interativos */
+  .btn-primary {
+    background-color: hsl(var(--pixel-white));
+    color: hsl(var(--pixel-black));
+    border: 3px solid hsl(var(--pixel-black));
+  }
+
+  .btn-success {
+    background-color: hsl(var(--pixel-green));
+    color: hsl(var(--pixel-white));
+    border: 3px solid hsl(var(--pixel-black));
+  }
+
+  .btn-danger {
+    background-color: hsl(var(--pixel-red));
+    color: hsl(var(--pixel-white));
+    border: 3px solid hsl(var(--pixel-black));
+  }
+
+  .btn-warning {
+    background-color: hsl(var(--pixel-yellow));
+    color: hsl(var(--pixel-black));
+    border: 3px solid hsl(var(--pixel-black));
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    background-color: hsl(var(--pixel-black));
+    color: hsl(var(--pixel-white));
+  }
+
+  /* Padrão de fundo 8-bit */
+  .pixel-bg {
+    background-image: 
+      linear-gradient(45deg, hsl(var(--pixel-black)) 25%, transparent 25%),
+      linear-gradient(-45deg, hsl(var(--pixel-black)) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, hsl(var(--pixel-black)) 75%),
+      linear-gradient(-45deg, transparent 75%, hsl(var(--pixel-black)) 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
   }
 }
