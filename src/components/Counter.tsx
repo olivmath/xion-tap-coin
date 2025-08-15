@@ -222,12 +222,13 @@ const Counter: React.FC = () => {
               
               <div className="space-y-2">
                 {leaderboard.map((player, index) => {
-                  const colors = [
-                    { bg: 'hsl(var(--pixel-yellow))', text: 'hsl(var(--pixel-black))' }, // 1º lugar
-                    { bg: 'hsl(var(--pixel-white))', text: 'hsl(var(--pixel-black))' },   // 2º lugar
-                    { bg: 'hsl(var(--pixel-red))', text: 'hsl(var(--pixel-white))' }      // 3º lugar
+                  // Degradê de cinza: mais escuro para melhor posição
+                  const grayValues = [
+                    { bg: '#404040', text: '#ffffff' }, // 1º lugar - cinza escuro
+                    { bg: '#606060', text: '#ffffff' }, // 2º lugar - cinza médio
+                    { bg: '#808080', text: '#ffffff' }  // 3º lugar - cinza claro
                   ];
-                  const color = colors[index] || colors[2];
+                  const color = grayValues[index] || grayValues[2];
                   
                   return (
                     <div
